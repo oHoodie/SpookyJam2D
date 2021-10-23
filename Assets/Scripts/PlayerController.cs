@@ -14,9 +14,11 @@ public class PlayerController : MonoBehaviour
     private PlaySoundFromList footsteps;
 
     private float footstepCounter = 0;
+    private bool isDead = false;
 
-    // Start is called before the first frame update
-    void Start()
+
+// Start is called before the first frame update
+void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         flashlight = GetComponentInChildren<FlashlightController>();
@@ -32,8 +34,19 @@ public class PlayerController : MonoBehaviour
     // FixedUpdate is for Physics Stuff
     void FixedUpdate()
     {
-        Move();
-        Rotate();
+        if (!isDead)
+        {
+            Move();
+            Rotate();
+        }
+
+    }
+
+    
+    public void Die()
+    {
+        isDead = true;
+        GameObject.Find("GameController").GetComponent<GameController>().GameOver();
     }
 
     private void Move()
@@ -69,4 +82,5 @@ public class PlayerController : MonoBehaviour
             footstepCounter = timeBetweenFootsteps;
         }
     }
+
 }

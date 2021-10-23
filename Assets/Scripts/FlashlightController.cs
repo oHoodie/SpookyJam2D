@@ -54,11 +54,6 @@ public class FlashlightController : MonoBehaviour
         }
     }
 
-    private void RayCastTarget()
-    {
-
-    }
-
     private void TurnOn(bool value)
     {
         spotlight.enabled = value;
