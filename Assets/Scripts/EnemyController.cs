@@ -42,12 +42,15 @@ public class EnemyController : MonoBehaviour
     private Seeker seeker;
     private Collider2D coll;
     private Vector2 sightDirection;
+    private AudioController audioController;
 
     private void Awake()
     {
         seeker = GetComponent<Seeker>();
         rb = GetComponent<Rigidbody2D>();
         coll = GetComponent<Collider2D>();
+        GameObject aC = GameObject.Find("AudioController");
+        if(aC != null) audioController = aC.GetComponent<AudioController>();
     }
 
     private void Start()
@@ -130,11 +133,13 @@ public class EnemyController : MonoBehaviour
     private void OnIdle()
     {
         direction = Vector2.zero;
+        if (audioController != null) audioController.SetAudioState(AudioController.AudioState.Normal);
     }
 
     private void OnChase()
     {
         targetPosition = target.position;
+        if(audioController != null) audioController.SetAudioState(AudioController.AudioState.Chased);
     }
 
     private void OnPatrol()
@@ -144,6 +149,7 @@ public class EnemyController : MonoBehaviour
             targetPosition = rb.position + Random.insideUnitCircle * patrolRadius;
             nextPatrolTime = Time.time + patrolTime;
         }
+        if (audioController != null) audioController.SetAudioState(AudioController.AudioState.Normal);
     }
 
     private bool CanSeeTarget()
