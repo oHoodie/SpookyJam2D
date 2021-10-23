@@ -68,7 +68,7 @@ public class EnemyController : MonoBehaviour
         else
         {
             Vector3 euler = visionCone.transform.rotation.eulerAngles;
-            euler.z += Mathf.Sin(Time.time * 0.5f);
+            euler.z += Mathf.Sin(Time.time * 0.25f) * 0.25f;
             visionCone.transform.rotation = Quaternion.Euler(euler);
         }
 
