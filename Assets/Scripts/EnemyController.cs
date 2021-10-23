@@ -8,6 +8,8 @@ using UnityEngine.Experimental.Rendering.LWRP;
 [RequireComponent(typeof(Collider2D))]
 public class EnemyController : MonoBehaviour
 {
+    public string Name;
+
     public float acceleration;
     public float maxMoveSpeed;
     public float brakeForce; // 0 = The player keeps moving almost forever after let go of key, 1 = instant stop
@@ -62,6 +64,12 @@ public class EnemyController : MonoBehaviour
         {
             visionCone.transform.rotation = Quaternion.Lerp(visionCone.transform.rotation,
                 Quaternion.LookRotation(Vector3.forward, rb.velocity.normalized), rotationSpeed * Time.deltaTime);
+        }
+        else
+        {
+            Vector3 euler = visionCone.transform.rotation.eulerAngles;
+            euler.z += Mathf.Sin(Time.time * 0.5f);
+            visionCone.transform.rotation = Quaternion.Euler(euler);
         }
 
         Think();
