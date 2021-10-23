@@ -49,7 +49,13 @@ public class GameController : MonoBehaviour
             }
             if (gameOverCounter / secondsToBlackScreen >= 1)
             {
-                SceneManager.LoadScene("MainMenu");
+                if(SceneManager.GetActiveScene().name == "MainMenu")
+                {
+                    SceneManager.LoadScene("TestScene");
+                }
+                else{
+                    SceneManager.LoadScene("MainMenu");
+                }
             }
         }
         else
