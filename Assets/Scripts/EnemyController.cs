@@ -2,17 +2,21 @@ using Pathfinding;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering.LWRP;
 
 [RequireComponent(typeof(Seeker))]
 [RequireComponent(typeof(Collider2D))]
 public class EnemyController : MonoBehaviour
 {
+    public string Name;
+
     public float acceleration;
     public float maxMoveSpeed;
     public float brakeForce; // 0 = The player keeps moving almost forever after let go of key, 1 = instant stop
     public float nextWaypointDistance;
     public float patrolTime;
     public float patrolRadius;
+    public float rotationSpeed = 10;
 
     [Header("Cone of Vision")]
 
@@ -23,6 +27,7 @@ public class EnemyController : MonoBehaviour
     public float sightDistance = 5;
 
     public Transform target;
+    public UnityEngine.Experimental.Rendering.Universal.Light2D visionCone;
 
     private bool reachedEndOfPath;
 
@@ -36,6 +41,7 @@ public class EnemyController : MonoBehaviour
     private Path path;
     private Seeker seeker;
     private Collider2D coll;
+    private Vector2 sightDirection;
 
     private void Awake()
     {
@@ -46,11 +52,26 @@ public class EnemyController : MonoBehaviour
 
     private void Start()
     {
+        visionCone.pointLightOuterRadius = sightDistance;
+        visionCone.pointLightOuterAngle = sightAngle;
+
         InvokeRepeating("CreatePath", 0, 0.25f);
     }
 
     void Update()
     {
+        if (rb.velocity.magnitude > 0.5f)
+        {
+            visionCone.transform.rotation = Quaternion.Lerp(visionCone.transform.rotation,
+                Quaternion.LookRotation(Vector3.forward, rb.velocity.normalized), rotationSpeed * Time.deltaTime);
+        }
+        else
+        {
+            Vector3 euler = visionCone.transform.rotation.eulerAngles;
+            euler.z += Mathf.Sin(Time.time * 0.25f) * 0.25f;
+            visionCone.transform.rotation = Quaternion.Euler(euler);
+        }
+
         Think();
     }
 
@@ -81,7 +102,7 @@ public class EnemyController : MonoBehaviour
         Vector2 currentWaypoint = path.vectorPath[currentWaypointIndex];
         direction = (currentWaypoint - rb.position).normalized;
 
-        if(Vector2.Distance(currentWaypoint, rb.position) < nextWaypointDistance)
+        if (Vector2.Distance(currentWaypoint, rb.position) < nextWaypointDistance)
         {
             currentWaypointIndex++;
         }
@@ -130,12 +151,12 @@ public class EnemyController : MonoBehaviour
         int halfSightAngle = sightAngle / 2;
         int angleStep = sightAngle / sightRaycasts;
 
-        Vector2 targetDirection = ((Vector2)target.position - rb.position).normalized;
+        Vector2 sightDirection = visionCone.transform.up;
 
         for (int i = -halfSightAngle; i <= halfSightAngle; i += angleStep)
         {
-            Vector2 raycastDirection = Quaternion.Euler(0, 0, i) * targetDirection;
-            RaycastHit2D hit = Physics2D.Raycast(coll.ClosestPoint(rb.position + targetDirection), 
+            Vector2 raycastDirection = Quaternion.Euler(0, 0, i) * sightDirection;
+            RaycastHit2D hit = Physics2D.Raycast(coll.ClosestPoint(rb.position + sightDirection), 
                 raycastDirection, sightDistance);
 
             if (hit.transform == target.transform) return true;
