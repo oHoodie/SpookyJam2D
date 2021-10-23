@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Seeker))]
+[RequireComponent(typeof(Collider2D))]
 public class EnemyController : MonoBehaviour
 {
     public float acceleration;
@@ -13,17 +14,19 @@ public class EnemyController : MonoBehaviour
     public float patrolTime;
     public float patrolRadius;
 
-    [Space]
+    [Header("Cone of Vision")]
 
-    public int sightRaycasts;
+    public int sightRaycasts = 8;
     [Range(0, 360)]
-    public int sightAngle;
-    public float sightDistance;
+    public int sightAngle = 135;
+
+    public float sightDistance = 5;
 
     public Transform target;
 
+    private bool reachedEndOfPath;
 
-    private int currentWaypointIndex = 0;
+    private int currentWaypointIndex;
 
     private float nextPatrolTime;
 
@@ -32,25 +35,25 @@ public class EnemyController : MonoBehaviour
     private Rigidbody2D rb;
     private Path path;
     private Seeker seeker;
+    private Collider2D coll;
 
     private void Awake()
     {
         seeker = GetComponent<Seeker>();
         rb = GetComponent<Rigidbody2D>();
+        coll = GetComponent<Collider2D>();
     }
 
     private void Start()
     {
-        InvokeRepeating("CreatePath", 0, 0.5f);
+        InvokeRepeating("CreatePath", 0, 0.25f);
     }
 
-    // Update is called once per frame
     void Update()
     {
         Think();
     }
 
-    // FixedUpdate is for Physics Stuff
     void FixedUpdate()
     {
         Move();
@@ -69,6 +72,10 @@ public class EnemyController : MonoBehaviour
         {
             direction = Vector2.zero;
             return;
+        }
+        else
+        {
+            reachedEndOfPath = false;
         }
 
         Vector2 currentWaypoint = path.vectorPath[currentWaypointIndex];
@@ -91,17 +98,31 @@ public class EnemyController : MonoBehaviour
 
     private void Think()
     {
-        if (CanSeeTarget()) //Chase
-        {
-            targetPosition = target.position;
-        }
-        else if(Time.time >= nextPatrolTime) //Patrol
+        if (CanSeeTarget()) OnChase();
+        else OnPatrol();
+
+        UpdatePath();
+
+        if (reachedEndOfPath) OnIdle();
+    }
+
+    private void OnIdle()
+    {
+        direction = Vector2.zero;
+    }
+
+    private void OnChase()
+    {
+        targetPosition = target.position;
+    }
+
+    private void OnPatrol()
+    {
+        if (Time.time >= nextPatrolTime)
         {
             targetPosition = rb.position + Random.insideUnitCircle * patrolRadius;
             nextPatrolTime = Time.time + patrolTime;
         }
-
-        UpdatePath();
     }
 
     private bool CanSeeTarget()
@@ -114,7 +135,8 @@ public class EnemyController : MonoBehaviour
         for (int i = -halfSightAngle; i <= halfSightAngle; i += angleStep)
         {
             Vector2 raycastDirection = Quaternion.Euler(0, 0, i) * targetDirection;
-            RaycastHit2D hit = Physics2D.Raycast(rb.position + targetDirection, raycastDirection, sightDistance);
+            RaycastHit2D hit = Physics2D.Raycast(coll.ClosestPoint(rb.position + targetDirection), 
+                raycastDirection, sightDistance);
 
             if (hit.transform == target.transform) return true;
         }
