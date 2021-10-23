@@ -79,16 +79,20 @@ public class FlashlightController : MonoBehaviour
         int halfSightAngle = sightAngle / 2;
         int angleStep = sightAngle / 15;
 
-        Vector2 targetDirection = ((Vector2)targetPoint.transform.position - (Vector2)transform.position).normalized;
+        Vector2 targetDirection = ((Vector2)targetPoint.transform.position - (Vector2)spotlight.transform.position).normalized;
 
         for (int i = -halfSightAngle; i <= halfSightAngle; i += angleStep)
         {
             Vector2 raycastDirection = Quaternion.Euler(0, 0, i) * targetDirection;
+            Debug.DrawLine(spotlight.transform.position, spotlight.transform.position + (Vector3)raycastDirection.normalized * sightDistance, Color.yellow, 2f);
             //origin, direction, distance, layermask
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, raycastDirection, sightDistance, LayerMask.NameToLayer("Enemy"));
-            if (hit.collider != null && hit.transform.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+            RaycastHit2D hit = Physics2D.Raycast(spotlight.transform.position, raycastDirection, sightDistance);
+
+            if (hit.collider != null && LayerMask.LayerToName(hit.transform.gameObject.layer) == "Enemy")
             {
-                GameObject.Find("GameController").GetComponent<GameController>().CompleteTask(hit.transform.gameObject.GetComponent<EnemyController>().name);
+                
+                Debug.Log("Captured on cam: " + hit.transform.gameObject.name);
+                GameObject.Find("GameController").GetComponent<GameController>().CompleteTask(hit.transform.gameObject.GetComponent<EnemyController>().Name);
                 return true;
             }
         }

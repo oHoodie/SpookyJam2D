@@ -55,6 +55,7 @@ public class GameController : MonoBehaviour
             if (tasks[i].name == taskName && !tasks[i].completed)
             {
                 tasks[i].completed = true;
+                Debug.Log("TASK COMPLETED: " + tasks[i].name);
             }
         }
     }
