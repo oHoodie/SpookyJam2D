@@ -7,20 +7,26 @@ public class PlayerController : MonoBehaviour
     public float acceleration;
     public float maxMoveSpeed;
     public float brakeForce; // 0 = The player keeps moving almost forever after let go of key, 1 = instant stop
+    public float timeBetweenFootsteps;
 
     private Rigidbody2D rb;
     private FlashlightController flashlight;
+    private PlaySoundFromList footsteps;
+
+    private float footstepCounter = 0;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         flashlight = GetComponentInChildren<FlashlightController>();
+        footsteps = GetComponent<PlaySoundFromList>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        HandleFootsteps();
     }
 
     // FixedUpdate is for Physics Stuff
@@ -52,5 +58,15 @@ public class PlayerController : MonoBehaviour
         Vector3 perpendicular = mousePos - transform.position;
         flashlight.transform.rotation = Quaternion.LookRotation(Vector3.forward, perpendicular) ;
 
+    }
+
+    private void HandleFootsteps()
+    {
+        footstepCounter -= Time.deltaTime;
+        if(footstepCounter <= 0 && rb.velocity.magnitude > 1)
+        {
+            footsteps.PlayRandom();
+            footstepCounter = timeBetweenFootsteps;
+        }
     }
 }
