@@ -12,12 +12,22 @@ public class GameController : MonoBehaviour
     private bool isGameOver = false;
     private float gameOverCounter;
     private float secondsSinceSceneStart = 0;
+    private List<Task> tasks;
 
+    private class Task
+    {
+        public string name;
+        public string description;
+        public bool completed = false;
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        tasks = new List<Task>();
+        tasks.Add(new Task() { name = "Curupira", description = "Take a picture of Curupira" });
+        tasks.Add(new Task() { name = "Mula Sem Cabeca", description = "Take a picture of Mula Sem Cabeca" });
+        tasks.Add(new Task() { name = "Leave", description = "Leave the forest once you have the pictures" });
     }
 
     // Update is called once per frame
@@ -36,6 +46,17 @@ public class GameController : MonoBehaviour
     public void GameOver()
     {
         isGameOver = true;
+    }
+
+    public void CompleteTask(string taskName)
+    {
+        for (int i = 0; i < tasks.Count; i++)
+        {
+            if (tasks[i].name == taskName && !tasks[i].completed)
+            {
+                tasks[i].completed = true;
+            }
+        }
     }
 
     private void HandleBlackScreeen()
