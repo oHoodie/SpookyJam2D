@@ -362,7 +362,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ee45e1da047d184fad19887d3cf7a4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pictureFailure: {fileID: 8300000, guid: 1e273cd6f8b18e64cb380233cced1ded, type: 3}
   targetPoint: {fileID: 2702678999774866711}
+  beingChasedText: {fileID: 0}
 --- !u!82 &2702679000790250533
 AudioSource:
   m_ObjectHideFlags: 0
