@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour
 
     private float footstepCounter = 0;
     private bool isDead = false;
-
+    private Animator animator;
 
 // Start is called before the first frame update
 void Start()
@@ -24,6 +24,7 @@ void Start()
         rb = GetComponent<Rigidbody2D>();
         flashlight = GetComponentInChildren<FlashlightController>();
         footsteps = GetComponent<PlaySoundFromList>();
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -48,6 +49,7 @@ void Start()
     {
         if (!isDead)
         {
+            animator.SetBool("isDead", true);
             deathSound.PlayRandom();
             isDead = true;
             GameObject.Find("GameController").GetComponent<GameController>().GameOver();
@@ -69,6 +71,20 @@ void Start()
 
         // Brakes
         rb.velocity = new Vector2(moveX == 0 ? rb.velocity.x * brakeForce : rb.velocity.x, moveY == 0 ? rb.velocity.y * brakeForce : rb.velocity.y);
+
+        // Anim
+        animator.SetBool("isMoving", rb.velocity.magnitude > 0.1f);
+
+        // Flip
+
+        if (rb.velocity.x > 0)
+        {
+            transform.localScale = new Vector3(0.04f, 0.04f, 1);
+        }
+        else
+        {
+            transform.localScale = new Vector3(-0.04f, 0.04f, 1);
+        }
     }
 
     private void Rotate()
