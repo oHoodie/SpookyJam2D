@@ -11,6 +11,7 @@ public class GameController : MonoBehaviour
     public GameObject taskUIPrefab;
 
     private bool isGameOver = false;
+    private bool isWon = false;
     private float gameOverCounter;
     private float secondsSinceSceneStart = 0;
     private List<Task> tasks;
@@ -30,7 +31,7 @@ public class GameController : MonoBehaviour
     {
         tasks = new List<Task>();
         tasks.Add(new Task() { name = "Curupira", description = "Take a picture of Curupira" });
-        tasks.Add(new Task() { name = "Mula Sem Cabeca", description = "Take a picture of Mula Sem Cabeça" });
+        tasks.Add(new Task() { name = "Mula", description = "Take a picture of Mula Sem Cabeça" });
         tasks.Add(new Task() { name = "Leave", description = "Leave the forest once you have the pictures" });
 
         GameObject taskContainer = GameObject.Find("TaskContainer");
@@ -63,6 +64,18 @@ public class GameController : MonoBehaviour
         isGameOver = true;
     }
 
+    public void Win()
+    {
+        if (!isWon && !isGameOver)
+        {
+            isGameOver = true;
+            isWon = true;
+            GameObject.Find("GameController").GetComponent<AudioSource>().Play();
+        }
+        
+
+    }
+
     public void CompleteTask(string taskName)
     {
         for (int i = 0; i < tasks.Count; i++)
@@ -81,13 +94,15 @@ public class GameController : MonoBehaviour
         if (isGameOver)
         {
             gameOverCounter += Time.deltaTime;
-            if (true)
-            {
-                blackScreen.color = new Color(0, 0, 0, gameOverCounter / secondsToBlackScreen);
-            }
+            blackScreen.color = new Color(0, 0, 0, gameOverCounter / secondsToBlackScreen);
+            
             if (gameOverCounter / secondsToBlackScreen >= 1)
             {
-                if(SceneManager.GetActiveScene().name == "MainMenu")
+                if (isWon)
+                {
+                    SceneManager.LoadScene("WinScreen");
+                }
+                else if(SceneManager.GetActiveScene().name == "MainMenu")
                 {
                     SceneManager.LoadScene("TestScene");
                 }
@@ -96,6 +111,7 @@ public class GameController : MonoBehaviour
                 }
             }
         }
+
         else
         {
             float alpha = secondsSinceSceneStart >= secondsToBlackScreen ? 0 : 1 - (secondsSinceSceneStart / secondsToBlackScreen);

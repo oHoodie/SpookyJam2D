@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
     public float maxMoveSpeed;
     public float brakeForce; // 0 = The player keeps moving almost forever after let go of key, 1 = instant stop
     public float timeBetweenFootsteps;
+    public PlaySoundFromList deathSound;
 
     private Rigidbody2D rb;
     private FlashlightController flashlight;
@@ -45,8 +46,13 @@ void Start()
     
     public void Die()
     {
-        isDead = true;
-        GameObject.Find("GameController").GetComponent<GameController>().GameOver();
+        if (!isDead)
+        {
+            deathSound.PlayRandom();
+            isDead = true;
+            GameObject.Find("GameController").GetComponent<GameController>().GameOver();
+        }
+
     }
 
     private void Move()

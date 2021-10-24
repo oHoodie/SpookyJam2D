@@ -54,7 +54,6 @@ public class AudioController : MonoBehaviour
         }
 
 
-        Debug.Log("Current Audio State is " + currentAudioState.ToString());
     }
     
 

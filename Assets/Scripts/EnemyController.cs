@@ -19,6 +19,7 @@ public class EnemyController : MonoBehaviour
     public float rotationSpeed = 10;
     public bool flipSprite = false;
     public float distanceForCloseAmbient;
+    public float killDistance;
 
     [Header("Cone of Vision")]
 
@@ -80,6 +81,8 @@ public class EnemyController : MonoBehaviour
         }
 
         Think();
+
+        KillPlayer();
     }
 
     void FixedUpdate()
@@ -87,6 +90,14 @@ public class EnemyController : MonoBehaviour
         Move();
     }
 
+    private void KillPlayer()
+    {
+        if (DistanceToTarget() <= killDistance)
+        {
+            PlayerController player = target.GetComponent<PlayerController>();
+            if (player != null) player.Die();
+        }
+    }
     private void FlipSprite()
     {
         if (flipSprite)
