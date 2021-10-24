@@ -90,7 +90,13 @@ public class FlashlightController : MonoBehaviour
 
             if (hit.collider != null && LayerMask.LayerToName(hit.transform.gameObject.layer) == "Enemy")
             {
-                
+                EnemyController enemyController = hit.collider.GetComponent<EnemyController>();
+
+                if(enemyController != null)
+                {
+                    enemyController.targetPosition = transform.position;
+                }
+
                 Debug.Log("Captured on cam: " + hit.transform.gameObject.name);
                 GameObject.Find("GameController").GetComponent<GameController>().CompleteTask(hit.transform.gameObject.GetComponent<EnemyController>().Name);
                 return true;
