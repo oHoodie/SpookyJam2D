@@ -74,19 +74,19 @@ public class AudioController : MonoBehaviour
         switch (currentAudioState)
         {
             case AudioState.Normal:
-                mainAmbient.volume = Mathf.Lerp(mainAmbient.volume, .5f, transitionSpeed);
+                mainAmbient.volume = Mathf.Lerp(mainAmbient.volume, .15f, transitionSpeed);
                 closeAmbient.volume = Mathf.Lerp(closeAmbient.volume, 0, transitionSpeed);
                 chasedAmbient.volume = Mathf.Lerp(chasedAmbient.volume, 0, transitionSpeed);
                 break;
             case AudioState.Close:
-                mainAmbient.volume = Mathf.Lerp(mainAmbient.volume, .5f, transitionSpeed);
-                closeAmbient.volume = Mathf.Lerp(closeAmbient.volume, .5f, transitionSpeed);
+                mainAmbient.volume = Mathf.Lerp(mainAmbient.volume, .15f, transitionSpeed);
+                closeAmbient.volume = Mathf.Lerp(closeAmbient.volume, .15f, transitionSpeed);
                 chasedAmbient.volume = Mathf.Lerp(chasedAmbient.volume, 0, transitionSpeed);
                 break;
             case AudioState.Chased:
-                mainAmbient.volume = Mathf.Lerp(mainAmbient.volume, .5f, transitionSpeed);
+                mainAmbient.volume = Mathf.Lerp(mainAmbient.volume, .15f, transitionSpeed);
                 closeAmbient.volume = Mathf.Lerp(closeAmbient.volume, 0, transitionSpeed);
-                chasedAmbient.volume = Mathf.Lerp(chasedAmbient.volume, .75f, transitionSpeed);
+                chasedAmbient.volume = Mathf.Lerp(chasedAmbient.volume, .15f, transitionSpeed);
                 break;
         }
     }
