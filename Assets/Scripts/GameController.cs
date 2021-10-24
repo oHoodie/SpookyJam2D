@@ -81,7 +81,6 @@ public class GameController : MonoBehaviour
             CompleteTask("Leave");
             isGameOver = true;
             isWon = true;
-            GameObject.Find("GameController").GetComponent<AudioSource>().Play();
         }
         
 
@@ -116,7 +115,7 @@ public class GameController : MonoBehaviour
                 }
                 else if(SceneManager.GetActiveScene().name == "MainMenu")
                 {
-                    SceneManager.LoadScene("TestScene");
+                    SceneManager.LoadScene("pheron");
                 }
                 else{
                     SceneManager.LoadScene("MainMenu");

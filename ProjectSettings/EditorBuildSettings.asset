@@ -11,10 +11,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MainMenu.unity
     guid: 79a624ff260342346abf4ad4ad79aeb5
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/TestScene.unity
     guid: 6402254378f1d12499621292c3a095c7
   - enabled: 1
     path: Assets/Scenes/WinScreen.unity
     guid: 7f04d089a62bf4743abd68a936fc5169
+  - enabled: 1
+    path: Assets/Scenes/pheron.unity
+    guid: 308903c4c011e6b44b450bea080f533b
   m_configObjects: {}
