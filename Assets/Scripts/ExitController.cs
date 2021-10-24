@@ -43,8 +43,12 @@ public class ExitController : MonoBehaviour
         if (collision.gameObject.name == "Player")
         {
             Debug.Log("WIIIIN");
-            GameObject.Find("GameController").GetComponent<GameController>().Win();
-            
+            GameController gc = GameObject.Find("GameController").GetComponent<GameController>();
+            if (gc.canLeave()) gc.Win();
+            else
+            {
+                GetComponent<AudioSource>().Play();
+            }
         }
     }
 }

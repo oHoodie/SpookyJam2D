@@ -59,6 +59,16 @@ public class GameController : MonoBehaviour
         HandleBlackScreeen();
     }
 
+    public bool canLeave()
+    {
+        int taskCompletedCount = 0;
+        for (int i = 0; i < tasks.Count; i++)
+        {
+            if (tasks[i].completed) taskCompletedCount++;
+        }
+        return taskCompletedCount >= 2;
+    }
+
     public void GameOver()
     {
         isGameOver = true;
@@ -68,6 +78,7 @@ public class GameController : MonoBehaviour
     {
         if (!isWon && !isGameOver)
         {
+            CompleteTask("Leave");
             isGameOver = true;
             isWon = true;
             GameObject.Find("GameController").GetComponent<AudioSource>().Play();
@@ -85,6 +96,7 @@ public class GameController : MonoBehaviour
                 tasks[i].completed = true;
                 tasks[i].ui.SetChecked(true);
                 Debug.Log("TASK COMPLETED: " + tasks[i].name);
+                GetComponent<AudioSource>().Play();
             }
         }
     }
