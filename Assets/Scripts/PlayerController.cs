@@ -82,5 +82,4 @@ void Start()
             footstepCounter = timeBetweenFootsteps;
         }
     }
-
 }

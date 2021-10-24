@@ -321,7 +321,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a57ef9c19fd906f45be3c6f0bbb9f5d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Name: 
+  Name: Curupira
   acceleration: 30
   maxMoveSpeed: 3
   brakeForce: 0.2
@@ -329,6 +329,8 @@ MonoBehaviour:
   patrolTime: 5
   patrolRadius: 10
   rotationSpeed: 4
+  flipSprite: 0
+  distanceForCloseAmbient: 20
   sightRaycasts: 8
   sightAngle: 180
   sightDistance: 5
@@ -355,17 +357,15 @@ MonoBehaviour:
   m_ShapePath:
   - {x: -0.093188286, y: -0.3259736, z: 0}
   - {x: -0.09318805, y: -0.14471817, z: 0}
-  - {x: -0.12607145, y: 0.39657763, z: 0}
-  - {x: -0.03376031, y: 0.44273314, z: 0}
-  - {x: 0.08451319, y: 0.37349984, z: 0}
-  - {x: 0.08451319, y: 0.018679082, z: 0}
+  - {x: -0.025619984, y: -0.08585602, z: 0}
+  - {x: 0.05873108, y: -0.08444971, z: 0}
   - {x: 0.107590914, y: -0.12844175, z: 0}
   - {x: 0.13068962, y: -0.2427988, z: 0}
   - {x: 0.087397814, y: -0.47749308, z: 0}
   - {x: -0.010662317, y: -0.4788638, z: 0}
-  m_ShapePathHash: 739203085
+  m_ShapePathHash: 2105089329
   m_Mesh: {fileID: 0}
-  m_InstanceId: 49196
+  m_InstanceId: 29286
 --- !u!95 &5122450760391205634
 Animator:
   serializedVersion: 3

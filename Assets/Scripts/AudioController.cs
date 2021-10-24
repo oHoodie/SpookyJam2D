@@ -6,18 +6,55 @@ public class AudioController : MonoBehaviour
 {
     public float transitionSpeed;
     public AudioSource mainAmbient;
-    public AudioSource bassAmbient;
+    public AudioSource closeAmbient;
+    public AudioSource chasedAmbient;
+
+    private AudioSource transitionToChase;
+    private float chaseCounter = 0;
+    private float minChaseThemeTime = 0;
+
 
     public enum AudioState
     {
-        Normal, Chased
+        Normal, Close, Chased
     }
 
-    private AudioState audioState = AudioState.Normal;
+    // 1 AudioState per enemy
+    private AudioState[] audioStates = new AudioState[] { AudioState.Normal, AudioState.Normal };
+    private AudioState currentAudioState = AudioState.Normal;
 
-    public void SetAudioState(AudioState state)
+    public void SetAudioState(AudioState state, string monsterName)
     {
-        audioState = state;
+        int index = monsterName == "Curupira" ? 0 : 1;
+        audioStates[index] = state;
+
+        // Play Chase starts sound effect
+        if ((audioStates[0] == AudioState.Chased || audioStates[1] == AudioState.Chased) && currentAudioState != AudioState.Chased && chaseCounter <= 0)
+        {
+            transitionToChase.Play();
+            chaseCounter = 20;
+        }
+
+        if(minChaseThemeTime <= 0)
+        {
+            // Set overall chase state
+            if (audioStates[0] == AudioState.Chased || audioStates[1] == AudioState.Chased)
+            {
+                currentAudioState = AudioState.Chased;
+                minChaseThemeTime = 10;
+            }
+            else if (audioStates[0] == AudioState.Close || audioStates[1] == AudioState.Close)
+            {
+                currentAudioState = AudioState.Close;
+            }
+            else
+            {
+                currentAudioState = AudioState.Normal;
+            }
+        }
+
+
+        Debug.Log("Current Audio State is " + currentAudioState.ToString());
     }
     
 
@@ -25,26 +62,31 @@ public class AudioController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        transitionToChase = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Return))
-        {
-            SetAudioState(AudioState.Chased);
-        }
+        minChaseThemeTime -= Time.deltaTime;
+        chaseCounter -= Time.deltaTime;
 
-        switch (audioState)
+        switch (currentAudioState)
         {
             case AudioState.Normal:
-                mainAmbient.volume = Mathf.Lerp(mainAmbient.volume, 1, transitionSpeed);
-                bassAmbient.volume = Mathf.Lerp(bassAmbient.volume, 0, transitionSpeed);
+                mainAmbient.volume = Mathf.Lerp(mainAmbient.volume, .5f, transitionSpeed);
+                closeAmbient.volume = Mathf.Lerp(closeAmbient.volume, 0, transitionSpeed);
+                chasedAmbient.volume = Mathf.Lerp(chasedAmbient.volume, 0, transitionSpeed);
+                break;
+            case AudioState.Close:
+                mainAmbient.volume = Mathf.Lerp(mainAmbient.volume, .5f, transitionSpeed);
+                closeAmbient.volume = Mathf.Lerp(closeAmbient.volume, .5f, transitionSpeed);
+                chasedAmbient.volume = Mathf.Lerp(chasedAmbient.volume, 0, transitionSpeed);
                 break;
             case AudioState.Chased:
-                mainAmbient.volume = Mathf.Lerp(mainAmbient.volume, 1, transitionSpeed);
-                bassAmbient.volume = Mathf.Lerp(bassAmbient.volume, 1, transitionSpeed);
+                mainAmbient.volume = Mathf.Lerp(mainAmbient.volume, .5f, transitionSpeed);
+                closeAmbient.volume = Mathf.Lerp(closeAmbient.volume, 0, transitionSpeed);
+                chasedAmbient.volume = Mathf.Lerp(chasedAmbient.volume, .75f, transitionSpeed);
                 break;
         }
     }

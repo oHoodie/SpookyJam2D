@@ -17,6 +17,8 @@ public class EnemyController : MonoBehaviour
     public float patrolTime;
     public float patrolRadius;
     public float rotationSpeed = 10;
+    public bool flipSprite = false;
+    public float distanceForCloseAmbient;
 
     [Header("Cone of Vision")]
 
@@ -67,6 +69,8 @@ public class EnemyController : MonoBehaviour
         {
             visionCone.transform.rotation = Quaternion.Lerp(visionCone.transform.rotation,
                 Quaternion.LookRotation(Vector3.forward, rb.velocity.normalized), rotationSpeed * Time.deltaTime);
+
+            FlipSprite();
         }
         else
         {
@@ -81,6 +85,21 @@ public class EnemyController : MonoBehaviour
     void FixedUpdate()
     {
         Move();
+    }
+
+    private void FlipSprite()
+    {
+        if (flipSprite)
+        {
+            if(rb.velocity.x < 0)
+            {
+                transform.localScale = new Vector3(-1, 1, 1);
+            }
+            else
+            {
+                transform.localScale = new Vector3(1, 1, 1);
+            }
+        }
     }
 
     private void CreatePath()
@@ -133,13 +152,20 @@ public class EnemyController : MonoBehaviour
     private void OnIdle()
     {
         direction = Vector2.zero;
-        if (audioController != null) audioController.SetAudioState(AudioController.AudioState.Normal);
+        if (audioController != null && DistanceToTarget() > distanceForCloseAmbient)
+        {
+            audioController.SetAudioState(AudioController.AudioState.Normal, Name);
+        }
+        else if (audioController != null)
+        {
+            audioController.SetAudioState(AudioController.AudioState.Close, Name);
+        }
     }
 
     private void OnChase()
     {
         targetPosition = target.position;
-        if(audioController != null) audioController.SetAudioState(AudioController.AudioState.Chased);
+        if(audioController != null) audioController.SetAudioState(AudioController.AudioState.Chased, Name);
     }
 
     private void OnPatrol()
@@ -149,7 +175,18 @@ public class EnemyController : MonoBehaviour
             targetPosition = rb.position + Random.insideUnitCircle * patrolRadius;
             nextPatrolTime = Time.time + patrolTime;
         }
-        if (audioController != null) audioController.SetAudioState(AudioController.AudioState.Normal);
+        if (audioController != null && DistanceToTarget() > distanceForCloseAmbient) {
+            audioController.SetAudioState(AudioController.AudioState.Normal, Name);
+        }
+        else if (audioController != null)
+        {
+            audioController.SetAudioState(AudioController.AudioState.Close, Name);
+        }
+    }
+
+    private float DistanceToTarget()
+    {
+        return Vector2.Distance(transform.position, target.transform.position);
     }
 
     private bool CanSeeTarget()
