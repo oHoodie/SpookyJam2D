@@ -10,6 +10,8 @@ public class EnemyController : MonoBehaviour
 {
     public string Name;
 
+    public bool isChasing;
+
     public float acceleration;
     public float maxMoveSpeed;
     public float brakeForce; // 0 = The player keeps moving almost forever after let go of key, 1 = instant stop
@@ -20,6 +22,9 @@ public class EnemyController : MonoBehaviour
     public bool flipSprite = false;
     public float distanceForCloseAmbient;
     public float killDistance;
+    public float rememberTime = 0.5f;
+
+    private float rememberTimer;
 
     [Header("Cone of Vision")]
 
@@ -152,7 +157,9 @@ public class EnemyController : MonoBehaviour
     private void Think()
     {
         if (CanSeeTarget()) OnChase();
-        else OnPatrol();
+        else if(rememberTimer <= 0) OnPatrol();
+
+        if(rememberTimer > 0) rememberTimer -= Time.deltaTime;
 
         UpdatePath();
 
@@ -174,12 +181,16 @@ public class EnemyController : MonoBehaviour
 
     private void OnChase()
     {
+        rememberTimer = rememberTime;
+        isChasing = true;
         targetPosition = target.position;
         if(audioController != null) audioController.SetAudioState(AudioController.AudioState.Chased, Name);
     }
 
     private void OnPatrol()
     {
+        isChasing = false;
+
         if (Time.time >= nextPatrolTime)
         {
             targetPosition = rb.position + Random.insideUnitCircle * patrolRadius;

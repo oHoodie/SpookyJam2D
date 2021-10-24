@@ -86,6 +86,19 @@ public class GameController : MonoBehaviour
 
     }
 
+    public bool IsTaskCompleted(string taskName)
+    {
+        for (int i = 0; i < tasks.Count; i++)
+        {
+            if (tasks[i].name == taskName && tasks[i].completed)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public void CompleteTask(string taskName)
     {
         for (int i = 0; i < tasks.Count; i++)

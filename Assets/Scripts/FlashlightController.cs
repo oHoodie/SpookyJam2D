@@ -2,10 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering.Universal;
+using UnityEngine.UI;
 
 public class FlashlightController : MonoBehaviour
 {
+    public AudioClip pictureFailure;
     public GameObject targetPoint;
+    public Text beingChasedText;
 
     private Light2D spotlight;
 
@@ -18,6 +21,8 @@ public class FlashlightController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        beingChasedText.enabled = false;
+
         spotlight = GetComponentInChildren<Light2D>();
         camSound = GetComponent<PlaySoundFromList>();
     }
@@ -55,6 +60,8 @@ public class FlashlightController : MonoBehaviour
                     }
                     else
                     {
+                        GetComponent<AudioSource>().clip = pictureFailure;
+                        GetComponent<AudioSource>().Play();
                         Debug.Log("PICTURE FAILURE");
                     }
                     photoTaken = true;
@@ -70,6 +77,17 @@ public class FlashlightController : MonoBehaviour
             }
         }
     }
+
+    IEnumerator BeingChased()
+    {
+        beingChasedText.enabled = true;
+
+        yield return new WaitForSeconds(3);
+
+        beingChasedText.enabled = false;
+    }
+
+    Coroutine beingChasedRoutine;
 
     private bool HasEnemyInPicture()
     {
@@ -91,15 +109,29 @@ public class FlashlightController : MonoBehaviour
             if (hit.collider != null && LayerMask.LayerToName(hit.transform.gameObject.layer) == "Enemy")
             {
                 EnemyController enemyController = hit.collider.GetComponent<EnemyController>();
+                GameController gameController = GameObject.Find("GameController").
+                    GetComponent<GameController>();
 
-                if(enemyController != null)
+                if (enemyController != null)
                 {
+                    string taskName = enemyController.Name;
+
+                    if (gameController.IsTaskCompleted(taskName)) return false;
+
+                    if (enemyController.isChasing)
+                    {
+                        if (beingChasedRoutine != null) StopCoroutine(beingChasedRoutine);
+                        beingChasedRoutine = StartCoroutine(BeingChased());
+                        return false;
+                    }
+
                     enemyController.targetPosition = transform.position;
+
+                    Debug.Log("Captured on cam: " + hit.transform.gameObject.name);
+                    gameController.CompleteTask(taskName);
+                    return true;
                 }
 
-                Debug.Log("Captured on cam: " + hit.transform.gameObject.name);
-                GameObject.Find("GameController").GetComponent<GameController>().CompleteTask(hit.transform.gameObject.GetComponent<EnemyController>().Name);
-                return true;
             }
         }
 
