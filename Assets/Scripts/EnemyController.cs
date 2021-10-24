@@ -39,12 +39,11 @@ public class EnemyController : MonoBehaviour
     private float nextPatrolTime;
 
     private Vector2 direction;
-    private Vector2 targetPosition;
+    public Vector2 targetPosition;
     private Rigidbody2D rb;
     private Path path;
     private Seeker seeker;
     private Collider2D coll;
-    private Vector2 sightDirection;
     private AudioController audioController;
 
     private void Awake()
